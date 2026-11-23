@@ -1,0 +1,22 @@
+{
+  "name": "qr-webcam-scanner",
+  "version": "1.0.0",
+  "description": "Local webcam barcode and QR keyboard wedge for Windows",
+  "main": "electron/main.js",
+  "author": "kikuKeii",
+  "license": "ISC",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "postinstall": "install-electron",
+    "start": "electron .",
+    "test": "node --test",
+    "build:win": "electron-builder --win portable"
+  },
+  "dependencies": {
+    "@zxing/library": "0.23.0"
+  },
+  "devDependencies": {
+    "electron": "45.4.1",
+    "electron-builder": "26.18.0"
+  }
+}
