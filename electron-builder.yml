@@ -1,0 +1,13 @@
+appId: com.kikukeii.webcamscanner
+productName: Webcam Keyboard Scanner
+directories:
+  output: dist
+files:
+  - electron/**/*
+  - src/**/*
+  - node_modules/@zxing/library/umd/index.min.js
+  - package.json
+win:
+  target:
+    - portable
+  signAndEditExecutable: false

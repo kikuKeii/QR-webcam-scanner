@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self' blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Webcam Keyboard Scanner</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <main>
+    <header>
+      <div><p class="eyebrow">LOCAL KEYBOARD WEDGE</p><h1>Webcam Scanner</h1><p>Scan into the application that has keyboard focus.</p></div>
+      <span id="status" class="status" role="status">Stopped</span>
+    </header>
+    <div id="message" role="alert" hidden></div>
+    <div class="layout">
+      <section class="card">
+        <div class="section-title"><h2>Camera</h2><span id="feedback"></span></div>
+        <div class="preview"><video id="video" muted playsinline></video><span id="placeholder">Camera preview</span></div>
+        <div class="controls">
+          <label>Camera<select id="camera"><option value="">Default camera</option></select></label>
+          <label>Resolution<select id="resolution"><option value="640x480">480p</option><option value="1280x720">720p</option><option value="1920x1080">1080p</option></select></label>
+        </div>
+        <div class="buttons"><button id="start" class="primary">Start scanner</button><button id="stop" disabled>Stop scanner</button></div>
+        <p class="hint">After starting, select the input field in your target application. Closing or minimizing this window sends it to the tray.</p>
+        <div class="last"><span>LAST SCAN</span><strong id="last">No scans yet</strong></div>
+      </section>
+      <section class="card">
+        <h2>Scanner settings</h2>
+        <label>Suffix key<select id="suffix"><option>Enter</option><option>Tab</option><option>None</option></select></label>
+        <label class="check"><input type="checkbox" id="preventDuplicates"> Prevent duplicate scans</label>
+        <div class="controls">
+          <label>Duplicate cooldown (ms)<input id="cooldown" type="number" min="250" max="600000" step="250"></label>
+          <label>Scan interval (ms)<input id="scanDelay" type="number" min="100" max="10000" step="50"></label>
+        </div>
+        <label class="check"><input type="checkbox" id="backgroundScanning"> Continue scanning in the tray</label>
+        <label class="check"><input type="checkbox" id="startWithWindows"> Start with Windows (packaged app)</label>
+        <p class="hint">Scans are typed into the currently focused window. Use the tray menu to stop scanning or exit completely.</p>
+      </section>
+    </div>
+    <section class="card history">
+      <div class="section-title"><h2>Recent scans</h2><div class="buttons"><button id="export">Export CSV</button><button id="clear">Clear history</button></div></div>
+      <ul id="history"></ul>
+    </section>
+  </main>
+  <script src="../node_modules/@zxing/library/umd/index.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
