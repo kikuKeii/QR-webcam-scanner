@@ -63,6 +63,8 @@ function updateControls() {
   $('status').classList.toggle('active', running);
   $('start').disabled = running || starting;
   $('stop').disabled = !running && !starting;
+  elements.cameraId.disabled = starting;
+  elements.resolution.disabled = starting;
   video.classList.toggle('active', running);
   $('placeholder').hidden = running;
 }
@@ -70,6 +72,7 @@ function updateControls() {
 async function stop() {
   ++generation;
   running = false;
+  starting = false;
   clearTimeout(timer);
   if (stream) stream.getTracks().forEach(track => track.stop());
   stream = null;
@@ -111,8 +114,10 @@ async function start() {
       message(`Could not start camera: ${error.message}`);
     }
   } finally {
-    starting = false;
-    updateControls();
+    if (current === generation) {
+      starting = false;
+      updateControls();
+    }
   }
 }
 
