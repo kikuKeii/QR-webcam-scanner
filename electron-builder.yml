@@ -2,6 +2,8 @@ appId: com.kikukeii.webcamscanner
 productName: Webcam Keyboard Scanner
 directories:
   output: dist
+asarUnpack:
+  - electron/keyboard.ps1
 files:
   - electron/**/*
   - src/**/*

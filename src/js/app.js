@@ -9,6 +9,7 @@ let settings;
 let history = [];
 let stream = null;
 let running = false;
+let starting = false;
 let generation = 0;
 let timer;
 let busy = false;
@@ -58,10 +59,10 @@ async function cameras() {
 }
 
 function updateControls() {
-  $('status').textContent = running ? 'Scanning' : 'Stopped';
+  $('status').textContent = running ? 'Scanning' : starting ? 'Starting…' : 'Stopped';
   $('status').classList.toggle('active', running);
-  $('start').disabled = running;
-  $('stop').disabled = !running;
+  $('start').disabled = running || starting;
+  $('stop').disabled = !running && !starting;
   video.classList.toggle('active', running);
   $('placeholder').hidden = running;
 }
@@ -80,8 +81,10 @@ async function stop() {
 }
 
 async function start() {
-  if (running) return;
+  if (running || starting) return;
   const current = ++generation;
+  starting = true;
+  updateControls();
   message('');
   try {
     const [width, height] = settings.resolution.split('x').map(Number);
@@ -107,6 +110,9 @@ async function start() {
       await stop();
       message(`Could not start camera: ${error.message}`);
     }
+  } finally {
+    starting = false;
+    updateControls();
   }
 }
 

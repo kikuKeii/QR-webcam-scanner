@@ -1,4 +1,5 @@
 const { spawn } = require('node:child_process');
+const { app } = require('electron');
 const path = require('node:path');
 let activeChild;
 
@@ -12,7 +13,10 @@ function typeText(text, suffix) {
   }
   return new Promise((resolve, reject) => {
     const executable = path.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');
-    const child = spawn(executable, ['-NoLogo', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', path.join(__dirname, 'keyboard.ps1')], {
+    const script = app.isPackaged
+      ? path.join(process.resourcesPath, 'app.asar.unpacked', 'electron', 'keyboard.ps1')
+      : path.join(__dirname, 'keyboard.ps1');
+    const child = spawn(executable, ['-NoLogo', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', script], {
       windowsHide: true, stdio: ['pipe', 'ignore', 'pipe']
     });
     activeChild = child;

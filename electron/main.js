@@ -11,6 +11,11 @@ let store;
 let scanning = false;
 let typing = false;
 let quitting = false;
+const hasLock = app.requestSingleInstanceLock();
+if (!hasLock) app.quit();
+app.on('second-instance', () => {
+  if (window) { window.show(); window.focus(); }
+});
 
 function command(value) {
   if (window && !window.isDestroyed()) window.webContents.send('command', value);
@@ -37,9 +42,10 @@ function handle(channel, fn) {
   });
 }
 
-app.whenReady().then(() => {
+if (hasLock) app.whenReady().then(() => {
   store = createStore(app.getPath('userData'));
-  session.defaultSession.setPermissionCheckHandler((_webContents, permission) => permission === 'media');
+  session.defaultSession.setPermissionCheckHandler((webContents, permission, _origin, details) =>
+    webContents === window?.webContents && permission === 'media' && details?.mediaType !== 'audio');
   session.defaultSession.setPermissionRequestHandler((webContents, permission, callback, details) => {
     callback(webContents === window?.webContents && permission === 'media' &&
       details.mediaTypes?.every(type => type === 'video'));
@@ -73,7 +79,9 @@ app.whenReady().then(() => {
   handle('load', () => store.get());
   handle('settings', settings => {
     const result = store.setSettings(settings);
-    if (process.platform === 'win32' && app.isPackaged) app.setLoginItemSettings({ openAtLogin: result.startWithWindows });
+    if (process.platform === 'win32' && app.isPackaged) {
+      app.setLoginItemSettings({ openAtLogin: result.startWithWindows, path: process.env.PORTABLE_EXECUTABLE_FILE || process.execPath });
+    }
     return result;
   });
   handle('state', value => {
